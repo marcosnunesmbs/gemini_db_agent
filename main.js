@@ -3,6 +3,20 @@ import dotenv from 'dotenv';
 dotenv.config();
 import runAgent from './geminiAgent.js';
 
+const history = [];
+
+function addToHistory(role, text) {
+    const message = { role, parts: [{ text: text }] };
+    history.push(message);
+}
+function getHistory() {
+    return history;
+}
+function clearHistory() {
+    history.length = 0;
+    return history;
+}
+
 const bot = new Telegraf(process.env.TELEGRAM_TOKEN);
 
 bot.start((ctx) => ctx.reply("Envie uma pergunta sobre o banco de dados."));
@@ -11,10 +25,20 @@ bot.command('id', (ctx) => {
     return ctx.reply(`Seu ID do Telegram é: ${ctx.message.from.id}`);
 });
 
+bot.command('clear', (ctx) => {
+    clearHistory();
+    return ctx.reply("Histórico limpo.");
+});
+
+bot.command('history', (ctx) => {
+    if (history.length === 0) {
+        return ctx.reply("Histórico vazio.");
+    }
+    const historyText = history.map((msg, index) => `${index + 1}. ${msg.role}: ${msg.parts[0].text}`).join('\n');
+    return ctx.reply(`Histórico:\n${historyText}`);
+});
+
 bot.on('text', async (ctx) => {
-    console.log(`Mensagem recebida: ${ctx.message.text}`);
-    console.log(`ID do usuário: ${ctx.message.from.id}`);
-    //verifica se o bot está ativo
     //verfiica que quem mandou a mensagem é um usuario e não um bot
     if (ctx.message.from.is_bot) {
         return;
@@ -24,9 +48,18 @@ bot.on('text', async (ctx) => {
         return ctx.reply("Você não está autorizado a usar este bot.");
     }
     const pergunta = ctx.message.text;
-    console.log(`Pergunta recebida: ${pergunta}`);
+
+    bot.telegram.sendChatAction(ctx.chat.id, 'typing');
+
     try {
-        const resposta = await runAgent(pergunta);
+        // Adiciona a pergunta ao histórico
+        addToHistory("user", pergunta);
+
+        // Chama a função runAgent para processar a pergunta
+        const resposta = await runAgent(pergunta, getHistory());
+
+        // Adiciona a resposta ao histórico
+        addToHistory("model", resposta);
         ctx.reply(resposta);
     } catch (err) {
         console.error(err);
@@ -34,23 +67,6 @@ bot.on('text', async (ctx) => {
     }
 });
 
-// Para teste direto via linha de comando
-if (process.argv[2] === "test") {
-    const testQuestion = "Quantas vendas foram feitas?";
-    console.log(`Testando com a pergunta: ${testQuestion}`);
-    runAgent(testQuestion)
-        .then(response => {
-            console.log("Resposta final:");
-            console.log(response);
-            process.exit(0);
-        })
-        .catch(error => {
-            console.error("Erro durante o teste:", error);
-            process.exit(1);
-        });
-} else {
-    // Inicia o bot do Telegram
-    bot.launch()
-        .then(() => console.log('Bot iniciado com sucesso!'))
-        .catch(err => console.error('Erro ao iniciar o bot:', err));
-}
+bot.launch()
+    .then(() => console.log('Bot iniciado com sucesso!'))
+    .catch(err => console.error('Erro ao iniciar o bot:', err));

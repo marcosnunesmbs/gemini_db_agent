@@ -9,9 +9,7 @@ const connection = await mysql.createConnection({
 });
 
 async function query(sql) {
-    const [results, fields] = await connection.execute(sql);
-    console.log("Resultados da consulta:", results);
-
+    const [results] = await connection.execute(sql);
     return results;
 }
 
