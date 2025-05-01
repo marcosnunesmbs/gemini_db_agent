@@ -11,10 +11,16 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
-async function runAgent(pergunta, history = []) {
+async function runAgent(pergunta, history = [], ctx = null) {
     // Cria uma cópia do histórico sem incluir a última pergunta do usuário
     // já que ela será enviada diretamente como mensagem
     let chatHistory = [];
+
+    let statusMessage = null;
+
+    if (ctx) {
+        statusMessage = await ctx.reply('🔄 Consultando...');
+    }
 
     if (history && history.length > 0) {
         // Se houver histórico e pelo menos 2 mensagens, pegamos tudo exceto a última (que é a pergunta atual)
@@ -102,7 +108,9 @@ async function runAgent(pergunta, history = []) {
                     
                     retonre para responder de mandeira criativa com emojis (moderadamente) e para o telegram, use quebra de linha com \n`,
                 });
-
+                if (statusMessage) {
+                    await ctx.deleteMessage(statusMessage.message_id);
+                }
                 return finalResponse.text;
 
             }

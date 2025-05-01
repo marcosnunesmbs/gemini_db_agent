@@ -56,7 +56,7 @@ bot.on('text', async (ctx) => {
         addToHistory("user", pergunta);
 
         // Chama a função runAgent para processar a pergunta
-        const resposta = await runAgent(pergunta, getHistory());
+        const resposta = await runAgent(pergunta, getHistory(), ctx);
 
         // Adiciona a resposta ao histórico
         addToHistory("model", resposta);
