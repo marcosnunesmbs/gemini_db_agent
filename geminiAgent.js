@@ -40,6 +40,7 @@ async function runAgent(pergunta, history = []) {
     });
 
     if (response.functionCalls && response.functionCalls.length > 0) {
+
         const functionCall = response.functionCalls[0];
         const functionName = functionCall.name;
 
@@ -55,7 +56,7 @@ async function runAgent(pergunta, history = []) {
 
             const schemaFilePath = path.resolve(__dirname, './database_schema.txt');
             const schema = await fs.readFile(schemaFilePath, 'utf-8');
-            const sqlQuestion = `baseado na pergunta: ${pergunta} e schema: ${schema} Reponsa em JSON com um comando SQL sobre a tabela ${process.env.DB_NAME} que pode retornar o que o usuário precisa e quer saber.
+            const sqlQuestion = `baseado na pergunta: ${pergunta}, no historico ${JSON.stringify(chatHistory)} e schema: ${schema} Reponsa em JSON com um comando SQL sobre a tabela ${process.env.DB_NAME} que pode retornar o que o usuário precisa e quer saber.
             caso não seja informado um campo, pesquise nome e id, e caso não seja informado uma tabela, busque na tabela ${process.env.DB_NAME} e retorne o JSON com o comando SQL.
             considere o histórico da conversa para entender o que o usuário quer, e não retorne nada além do JSON com o comando SQL.`;
 
@@ -99,7 +100,7 @@ async function runAgent(pergunta, history = []) {
                     da query que foi a seguinte:
                     ${queryResult}
                     
-                    retonre para responder de mandeira criativa com emojis e para o telegram, use quebra de linha com \n`,
+                    retonre para responder de mandeira criativa com emojis (moderadamente) e para o telegram, use quebra de linha com \n`,
                 });
 
                 return finalResponse.text;

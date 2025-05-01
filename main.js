@@ -49,7 +49,7 @@ bot.on('text', async (ctx) => {
     }
     const pergunta = ctx.message.text;
 
-    bot.telegram.sendChatAction(ctx.chat.id, 'typing');
+
 
     try {
         // Adiciona a pergunta ao histórico
@@ -63,10 +63,12 @@ bot.on('text', async (ctx) => {
         ctx.reply(resposta);
     } catch (err) {
         console.error(err);
+        await ctx.deleteMessage(statusMessage.message_id);
         ctx.reply("Erro ao processar sua pergunta.");
     }
 });
 
 bot.launch()
-    .then(() => console.log('Bot iniciado com sucesso!'))
-    .catch(err => console.error('Erro ao iniciar o bot:', err));
+
+process.once('SIGINT', () => bot.stop('SIGINT'))
+process.once('SIGTERM', () => bot.stop('SIGTERM'))
