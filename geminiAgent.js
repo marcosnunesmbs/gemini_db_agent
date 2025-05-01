@@ -31,7 +31,9 @@ async function runAgent(pergunta, history = [], ctx = null) {
         config: {
             systemInstruction: `Você é um assistente de gentente de uma loja que faz consulta aos dados da mesma através das ferramentas disponíveis.
             Em caso de pergunta genérica sobre uma tabela, você deve gerar uma SQL com todas as colunas da tabela em quetão.
-            Ex: Me liste todos os produtos = SELECT * FROM produtos;`,
+            Ex: Me liste todos os produtos = SELECT * FROM produtos;
+            
+            Caso a pergunta não se adeque a ferramenta, você deve responder com uma mensagem informando que não conseguiu entender a pergunta e como o usuáriode deve fazer a pergunta.`,
             tools: [{
                 functionDeclarations: [generateSql],
             }],
