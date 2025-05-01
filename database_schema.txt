@@ -1,0 +1,46 @@
+CREATE DATABASE loja;
+USE loja;
+
+-- Tabela Clientes
+CREATE TABLE Clientes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100),
+    email VARCHAR(100),
+    status BOOLEAN,
+    data_criacao DATE,
+    data_ultimo_acesso DATE
+);
+
+-- Tabela Produto
+CREATE TABLE Produto (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100),
+    descricao TEXT,
+    valor DECIMAL(10,2),
+    preco_custo DECIMAL(10,2),
+    estoque INT,
+    data_criacao DATE
+);
+
+-- Tabela Vendas
+CREATE TABLE Vendas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    cliente_id INT,
+    total DECIMAL(10,2),
+    data_venda DATE,
+    data_criacao DATE,
+    FOREIGN KEY (cliente_id) REFERENCES Clientes(id)
+);
+
+-- Tabela Produtos_Vendas
+CREATE TABLE Produtos_Vendas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    venda_id INT,
+    produto_id INT,
+    preco_venda DECIMAL(10,2),
+    quantidade INT,
+    desconto DECIMAL(10,2),
+    total DECIMAL(10,2),
+    FOREIGN KEY (venda_id) REFERENCES Vendas(id),
+    FOREIGN KEY (produto_id) REFERENCES Produto(id)
+);
