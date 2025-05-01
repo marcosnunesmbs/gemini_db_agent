@@ -18,10 +18,6 @@ async function runAgent(pergunta, history = [], ctx = null) {
 
     let statusMessage = null;
 
-    if (ctx) {
-        statusMessage = await ctx.reply('🔄 Consultando...');
-    }
-
     if (history && history.length > 0) {
         // Se houver histórico e pelo menos 2 mensagens, pegamos tudo exceto a última (que é a pergunta atual)
         if (history.length > 1) {
@@ -46,6 +42,10 @@ async function runAgent(pergunta, history = [], ctx = null) {
     });
 
     if (response.functionCalls && response.functionCalls.length > 0) {
+
+        if (ctx) {
+            statusMessage = await ctx.reply('🔄 Consultando...');
+        }
 
         const functionCall = response.functionCalls[0];
         const functionName = functionCall.name;

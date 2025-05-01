@@ -49,8 +49,6 @@ bot.on('text', async (ctx) => {
     }
     const pergunta = ctx.message.text;
 
-
-
     try {
         // Adiciona a pergunta ao histórico
         addToHistory("user", pergunta);
