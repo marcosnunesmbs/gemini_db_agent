@@ -29,8 +29,7 @@ async function runAgent(pergunta, history = [], ctx = null) {
         model: 'gemini-2.0-flash',
         history: chatHistory,
         config: {
-            systemInstruction: `Você é um assistente de gentente de uma loja que faz consulta aos dados da mesma.
-            responde sempre de maneira criativa e com emojis, sempre que possível.`,
+            systemInstruction: `Você é um assistente de gentente de uma loja que faz consulta aos dados da mesma através das ferramentas disponíveis.`,
             tools: [{
                 functionDeclarations: [generateSql],
             }],
