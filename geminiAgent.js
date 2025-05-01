@@ -26,7 +26,10 @@ async function runAgent(pergunta, history = [], ctx = null) {
     }
 
     const chat = await genAI.chats.create({
-        model: 'gemini-2.0-flash',
+        model: 'gemini-2.5-flash-preview-04-17',
+        thinkingConfig: {
+            thinkingBudget: 512,
+        },
         history: chatHistory,
         config: {
             systemInstruction: `
