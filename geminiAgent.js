@@ -62,7 +62,7 @@ async function runAgent(pergunta, history = [], ctx = null) {
 
             const schemaFilePath = path.resolve(__dirname, './database_schema.txt');
             const schema = await fs.readFile(schemaFilePath, 'utf-8');
-            const sqlQuestion = `baseado no comando/pergunta: ${pergunta}, no historico ${JSON.stringify(chatHistory)} e schema: ${schema} Reponsa em JSON com um comando SQL sobre a tabela ${process.env.DB_NAME} que pode retornar o que o usuário precisa e quer saber.
+            const sqlQuestion = `baseado no comando/pergunta: ${pergunta}, no historico ${JSON.stringify(chatHistory.slice(-3))} e schema: ${schema} Reponsa em JSON com um comando SQL sobre a tabela ${process.env.DB_NAME} que pode retornar o que o usuário precisa e quer saber.
             caso não seja informado um campo, pesquise nome e id, e caso não seja informado uma tabela, busque na tabela ${process.env.DB_NAME} e retorne o JSON com o comando SQL.
             considere o histórico da conversa para entender o que o usuário quer, e não retorne nada além do JSON com o comando SQL.`;
 
