@@ -29,7 +29,9 @@ async function runAgent(pergunta, history = [], ctx = null) {
         model: 'gemini-2.0-flash',
         history: chatHistory,
         config: {
-            systemInstruction: `Você é um assistente de gentente de uma loja que faz consulta aos dados da mesma através das ferramentas disponíveis.`,
+            systemInstruction: `Você é um assistente de gentente de uma loja que faz consulta aos dados da mesma através das ferramentas disponíveis.
+            Em caso de pergunta genérica sobre uma tabela, você deve gerar uma SQL com todas as colunas da tabela em quetão.
+            Ex: Me liste todos os producos = SELECT * FROM produtos;`,
             tools: [{
                 functionDeclarations: [generateSql],
             }],
