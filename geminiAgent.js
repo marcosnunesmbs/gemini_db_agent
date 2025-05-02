@@ -117,11 +117,19 @@ async function runAgent(pergunta, history = [], ctx = null) {
 
             if (queryResult) {
                 const finalResponse = await chat.sendMessage({
-                    message: `Reponendo a pergunta: ${pergunta}, retorne uma resposta em linguagem natural o resultado
-                    da query que foi a seguinte:
+                    message: `
+                    Reponendo a pergunta: ${pergunta}, retorne uma resposta em linguagem natural o resultado da query que foi a seguinte:
                     ${queryResult}
                     
-                    retonre para responder de mandeira criativa com emojis (moderadamente) e para o telegram, use quebra de linha com \n`,
+                    retonre para responder de mandeira criativa com emojis (moderadamente) e para o telegram, use quebra de linha com \n
+                    
+                    comandos para telegram:
+                    **Este texto é negrito.**
+                    _Este texto é itálico._
+                    __Este texto é sublinhado.__
+                    ~Este texto é tachado.~
+                    |Este texto é um spoiler.|
+                    \`Este texto é em fonte monoespaçada.\``,
                 });
                 if (statusMessage) {
                     await ctx.deleteMessage(statusMessage.message_id);
