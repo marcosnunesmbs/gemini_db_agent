@@ -18,6 +18,14 @@ async function runAgent(pergunta, history = [], ctx = null) {
 
     let statusMessage = null;
 
+    let thinkingMessage = null;
+
+    if (ctx) {
+
+        // Envia uma mensagem de "pensando" para o usuário
+        thinkingMessage = await ctx.reply('🧠Pensando...');
+    }
+
     if (history && history.length > 0) {
         // Se houver histórico e pelo menos 2 mensagens, pegamos tudo exceto a última (que é a pergunta atual)
         if (history.length > 1) {
@@ -28,7 +36,7 @@ async function runAgent(pergunta, history = [], ctx = null) {
     const chat = await genAI.chats.create({
         model: 'gemini-2.5-flash-preview-04-17',
         thinkingConfig: {
-            thinkingBudget: 512,
+            thinkingBudget: 256,
         },
         history: chatHistory,
         config: {
@@ -48,6 +56,8 @@ async function runAgent(pergunta, history = [], ctx = null) {
     const response = await chat.sendMessage({
         message: pergunta,
     });
+
+    await ctx.deleteMessage(thinkingMessage.message_id);
 
     if (response.functionCalls && response.functionCalls.length > 0) {
 
