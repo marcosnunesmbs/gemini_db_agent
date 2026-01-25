@@ -9,6 +9,41 @@ Um bot de Telegram integrado com o Google Gemini AI que permite realizar consult
 - Conversa com histórico preservado
 - Respostas formatadas e criativas
 
+## Fluxo Lógico
+
+```mermaid
+flowchart TD
+    User([Usuário]) -->|Mensagem| Telegram["Telegram Bot\nTelegraf"]
+    Telegram -->|Webhook/Update| Main[Main.js]
+    
+    subgraph Agente
+        Main -->|Verifica Autorização| Auth{Autorizado?}
+        Auth -->|Sim| RunAgent[runAgent]
+        
+        RunAgent -->|Pergunta + Histórico| GeminiRouter["Gemini 2.5 Flash-Lite\n(Orquestrador)"]
+        
+        GeminiRouter -->|Analisa Intenção| Decision{Usa Ferramenta?}
+        
+        Decision -->|Não| DirectAnswer[Resposta Direta]
+        
+        Decision -->|Sim: generate_sql| SchemaOp[Lê Schema DB]
+        SchemaOp -->|Instrução SQL| GeminiSQL["Gemini 2.0 Flash\n(Gerador SQL)"]
+        GeminiSQL -->|JSON SQL| ParseSQL[Extrai Query]
+        
+        ParseSQL -->|Executa| DB[(Banco de Dados)]
+        DB -->|Retorna Linhas| FormatResult[Formata Resultado]
+        
+        FormatResult -->|Resultado + Contexto| GeminiFinal["Gemini Orquestrador\n(Sintetizador)"]
+        GeminiFinal -->|Resposta em Linguagem Natural| FinalResponse[Resposta Final]
+    end
+
+    DirectAnswer --> Reply[Envia para Telegram]
+    FinalResponse --> Reply
+    Auth -->|Não| ReplyErro[Mensagem de Erro] --> Reply
+    Reply --> Telegram
+    Telegram --> User
+```
+
 ## Requisitos
 
 - Node.js v14+
